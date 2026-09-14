@@ -1,0 +1,35 @@
+name: Build For UZN
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install esbuild
+        run: npm install esbuild
+
+      - name: Run build script
+        run: node build-for-uzn.mjs
+      
+      - name: Upload to latest Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest
+          name: latest
+          allowUpdates: true
+          removeArtifacts: true
+          artifacts: |
+            dist/danmu_api_server.cjs
+            dist/danmu_api_server.cjs.md5
+          token: ${{ secrets.GITHUB_TOKEN }}
