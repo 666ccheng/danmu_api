@@ -101,14 +101,14 @@ function rewriteSources() {
                         /path\.join\(\s*__dirname\s*,\s*(['"])\.\.\1\s*,\s*(['"])\.\.\2\s*,\s*(['"])\.\.\3\s*,\s*(['"])config\4\s*,\s*(['"])\.env\5\s*\)/g,
                         `path.join(__dirname, '..', 'config', '.env')`,
                         'node-handler.js config .env 路径',
-                        { minCount: 1 }
+                        { minCount: 0 }
                     );
                     contents = replaceAndAssert(
                         contents,
                         /path\.join\(\s*__dirname\s*,\s*(['"])\.\.\1\s*,\s*(['"])\.\.\2\s*,\s*(['"])\.\.\3\s*,\s*(['"])config\4\s*\)/g,
                         `path.join(__dirname, '..', 'config')`,
                         'node-handler.js config 目录路径',
-                        { minCount: 1 }
+                        { minCount 0 }
                     );
                     changed = true;
                 }
@@ -133,7 +133,7 @@ function rewriteSources() {
                         /import\(\s*\[\s*(['"])\.\/node-handler\1\s*,\s*\1\.js\1\s*\]\s*\.\s*join\(\s*\1\1\s*\)\s*\)/g,
                         `import('./node-handler.js')`,
                         'handler-factory.js 拼接 import',
-                        { minCount: 1 }
+                        { minCount: 0 }
                     );
                     changed = true;
                 }
