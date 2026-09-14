@@ -11,13 +11,15 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Install Node 22
+      - name: Install Node.js 20
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
 
-      - name: Install esbuild
-        run: npm install esbuild
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install esbuild --save-dev
 
       - name: Run build script
         run: node build-for-uzn.mjs
@@ -33,3 +35,4 @@ jobs:
             dist/danmu_api_server.cjs
             dist/danmu_api_server.cjs.md5
           token: ${{ secrets.GITHUB_TOKEN }}
+
