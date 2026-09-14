@@ -1,38 +1,52 @@
-name: Build For UZN
+name: Build danmu-api for UZN
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
-
+permissions:
+  contents: write
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Node.js 20
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '22'
 
       - name: Install dependencies
-        run: |
-          npm install
-          npm install esbuild --save-dev
+        run: npm install
 
-      - name: Run build script
+      - name: Build bundle
         run: node build-for-uzn.mjs
-      
-      - name: Upload to latest Release
-        uses: ncipollo/release-action@v1
+
+      - name: Upload artifacts to Release
+        uses: softprops/action-gh-release@v2
         with:
-          tag: latest
-          name: latest
-          allowUpdates: true
-          removeArtifacts: true
-          artifacts: |
+          tag_name: latest
+          name: danmu-api 服务端（UZN 专用构建）
+          body: |
+            每次推送 main 分支后自动构建并覆盖更新，下载链接固定不变。
+            - 构建提交: ${{ github.sha }}
+            ## 使用说明（UZN 网络订阅源）
+            1. 复制下方订阅链接
+            2. 打开弹幕服务页，选择「本地服务」
+            3. 选择「网络订阅源」
+            4. 粘贴订阅链接并保存即可
+            ```
+            https://github.com/${{ github.repository }}/releases/download/latest/danmu_api_server.cjs.md5
+            ```
+            ## 文件说明
+            - [`danmu_api_server.cjs`](https://github.com/${{ github.repository }}/releases/download/latest/danmu_api_server.cjs)：服务端主程序
+            - [`danmu_api_server.cjs.md5`](https://github.com/${{ github.repository }}/releases/download/latest/danmu_api_server.cjs.md5)：主程序内容的 md5，订阅源通过比对 md5 判断是否有新版本并自动更新
+          files: |
             dist/danmu_api_server.cjs
             dist/danmu_api_server.cjs.md5
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_unmatched_files: true
+          make_latest: true
+
 
